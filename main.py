@@ -9,3 +9,4 @@ if __name__ == '__main__':
     ch.print_info()
     print("\n ")
     ch.get_title()
+    ch.set_parameters()
