@@ -10,15 +10,49 @@ class Channel:
     def __init__(self, channel_id="default"):
         self.__channel_id = channel_id
         self.is_connected = False
-        self.channel_name = None
+        # self.channel_name = None
         self.content = None
         self.info = None
         self.title = None
         self.description = None
-        self.url = None
+        self.url = "https://www.youtube.com/channel/" + channel_id
         self.followers = None
         self.video_count = None
         self.view_count = None
+
+    def __str__(self):
+        return f"{self.title} ({self.url})"
+
+    def __add__(self, other) -> int:
+        return int(self.followers) + int(other.followers)
+
+    def __sub__(self, other):
+        return int(self.followers) - int(other.followers)
+
+    def __gt__(self, other):
+        if self.followers > other.followers:
+            return True
+        return False
+
+    def __ge__(self, other):
+        if self.followers >= other.followers:
+            return True
+        return False
+
+    def __lt__(self, other):
+        if self.followers < other.followers:
+            return True
+        return False
+
+    def __le__(self, other):
+        if self.followers <= other.followers:
+            return True
+        return False
+
+    def __eq__(self, other):
+        if self.followers == other.followers:
+            return True
+        return False
 
 
     def connect(self):
@@ -28,7 +62,7 @@ class Channel:
         # создать специальный объект для работы с API
         youtube_build = build('youtube', 'v3', developerKey=api_key)
         if youtube_build:
-            Channel.__service_name = youtube_build
+            self.__service_name = youtube_build
             self.is_connected = True
             self.content = youtube_build.channels().list(id=self.channel_id, part='snippet,statistics').execute()
 
@@ -56,8 +90,10 @@ class Channel:
         if self.is_connected:
             self.title = self.content["items"][0]["snippet"]["title"]
             self.description = self.content["items"][0]["snippet"]["description"]
-            self.url = self.content["items"][0]["snippet"]["thumbnails"]["default"]["url"]
-            self.followers = self.content["items"][0]["statistics"]["subscriberCount"]
+            # self.url = self.content["items"][0]["snippet"]["thumbnails"]["default"]["url"]
+            tmp_followers : str = self.content["items"][0]["statistics"]["subscriberCount"]
+            if tmp_followers.isdigit():
+                self.followers = int(tmp_followers)
             self.video_count = self.content["items"][0]["statistics"]["videoCount"]
             self.view_count = self.content["items"][0]["statistics"]["viewCount"]
 

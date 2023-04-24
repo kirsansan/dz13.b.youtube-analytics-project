@@ -5,8 +5,14 @@ if __name__ == '__main__':
     vdud = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
     redactsiya = Channel('UC1eFXmJNkjITxPFWTy6RsWg')
 
+    vdud.connect()
+    vdud.set_parameters()
+    redactsiya.connect()
+    redactsiya.set_parameters()
+
     # Используем различные магические методы
     print(vdud)  # 'вДудь (https://www.youtube.com/channel/UCMCgOm8GZkHp8zJ6l7_hIuA)'
+    print(vdud.followers)
     print(vdud + redactsiya)  # 13970000
     print(vdud - redactsiya)  # 6630000
     print(redactsiya - vdud)  # -6630000
