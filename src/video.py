@@ -3,7 +3,7 @@ import json
 from src.youtube_connector import YouTubeConnector
 
 
-class Video():
+class Video:
 
     def __init__(self, id_video):
         self.id_video = id_video
