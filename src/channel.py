@@ -118,3 +118,10 @@ class Channel:
     @property
     def channel_id(self):
         return self.__channel_id
+
+
+if __name__ == '__main__':
+    ch = Channel('UC1eFXmJNkjITxPFWTy6RsWg')
+    ch.connect()
+    ch.print_info()
+

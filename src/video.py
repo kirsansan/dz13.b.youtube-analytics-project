@@ -1,6 +1,8 @@
 from src.channel import Channel
 import json
 from src.youtube_connector import YouTubeConnectorMixin
+from src.channel import Channel
+
 
 
 class Video(YouTubeConnectorMixin):
@@ -36,7 +38,6 @@ class Video(YouTubeConnectorMixin):
     def print_info(self):
         """ just touch set_info and print self.info"""
         if self.is_connected:
-            self.get_info()
             print(self.info)
 
     def parse_info(self):
@@ -53,11 +54,21 @@ class Video(YouTubeConnectorMixin):
                 self.view_count_video = int(tmp_video_count)
 
 
+    def get_duration(self) -> str:
+        if self.content:
+            duration = self.content["items"][0]["contentDetails"]["duration"]
+            return duration
+
+
+
 
 if __name__ == '__main__':
     v1 = Video('9lO06Zxhu88')
     # v.print_info()
-    print(v1)
+    # print(v1)
     v2 = Video('BBotskuyw_M')
-    # v2.print_info()
+    v2.print_info()
     print(v2)
+    print(v1.get_duration())
+    # ch = Channel("UCNYejKoEJ84iGgXPwTBkCCg")
+    # print(ch)

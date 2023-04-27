@@ -2,6 +2,7 @@ from src.channel import Channel
 
 if __name__ == '__main__':
     vdud = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
+    vdud = Channel("UC1eFXmJNkjITxPFWTy6RsWg")
 
     vdud.connect()
     vdud.print_info()
@@ -25,3 +26,6 @@ if __name__ == '__main__':
 
     # создаем файл 'vdud.json' в данными по каналу
     vdud.to_json('vdud.json')
+
+    who_is_it = Channel('UC1eFXmJNkjITxPFWTy6RsWg')
+    who_is_it.print_info()
