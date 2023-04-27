@@ -67,18 +67,27 @@ class PlayList(YouTubeConnectorMixin):
         calculate total duration for all videos in the  playlist
         :return: datetime.timedelta object
         """
-        tmp_time_summary = datetime.timedelta(0)
+        tmp_time_summary = datetime.timedelta(seconds=0)
         video_ids: list[str] = [video['contentDetails']['videoId'] for video in self.__content['items']]
         for vid_id in video_ids:
             video = Video(vid_id)
             iso_8601_duration = video.get_duration()
             duration = isodate.parse_duration(iso_8601_duration)
             tmp_time_summary += duration
-            # print(type(tmp_time_summary))
         return tmp_time_summary
 
-
-
+    def show_best_video(self):
+        """ find the best video in playlist (video with maximum numver of views)
+        :return: url video"""
+        max_video_time = 0
+        video_link = None
+        video_ids: list[str] = [video['contentDetails']['videoId'] for video in self.__content['items']]
+        for vid_id in video_ids:
+            video = Video(vid_id)
+            if video.count_views > max_video_time:
+                video_link = video.url_video
+                max_video_time = video.count_views
+        return video_link
 
 if __name__ == '__main__':
     pl = PlayList('PLguYHBi01DWr4bRWc4uaguASmo7lW4GCb')
@@ -87,3 +96,4 @@ if __name__ == '__main__':
     #print(pl.total_duration())
     print("tdur=", pl.total_duration)
     print(type(pl.total_duration))
+    print(pl.show_best_video())

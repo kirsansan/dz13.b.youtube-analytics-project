@@ -45,7 +45,7 @@ class Video(YouTubeConnectorMixin):
         if self.is_connected and self.content:
             self.info = json.dumps(self.content, indent=2, ensure_ascii=False)
             self.title_video = self.content["items"][0]["snippet"]["title"]
-            self.url_video = self.content["items"][0]["snippet"]["thumbnails"]["default"]["url"]
+            self.url_video = "https://youtu.be/" + self.id_video
             tmp_likes_video: str = self.content["items"][0]["statistics"]["likeCount"]
             if tmp_likes_video.isdigit():
                 self.likes_video = int(tmp_likes_video)
@@ -55,11 +55,15 @@ class Video(YouTubeConnectorMixin):
 
 
     def get_duration(self) -> str:
+        """Returns the duration of the video"""
         if self.content:
             duration = self.content["items"][0]["contentDetails"]["duration"]
             return duration
 
-
+    @property
+    def count_views(self) -> int:
+        """return count of view the video"""
+        return self.view_count_video
 
 
 if __name__ == '__main__':
