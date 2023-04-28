@@ -1,7 +1,7 @@
 from src.channel import Channel
 import json
 from src.youtube_connector import YouTubeConnectorMixin
-from src.channel import Channel
+from googleapiclient.errors import HttpError
 
 
 
@@ -12,28 +12,33 @@ class Video(YouTubeConnectorMixin):
         self.__connector = self.get_connector()
         self.info = None              # will be filled by the update_info()
         self.content = None           # will be filled by the get_info()
+        self.is_connected = False
+        self.title = None
+        self.url_video = None
+        self.like_count = None
+        self.view_count_video = None
         if self.__connector:
             self.is_connected = True
             self.get_info()
             self.parse_info()
-        else:
-            self.is_connected = False
-            self.title_video = None
-            self.url_video = None
-            self.likes_video = None
-            self.view_count_video = None
+
+
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id_video}"
 
     def __str__(self):
-        return f"{self.title_video}"
+        return f"{self.title}"
 
 
     def get_info(self):
         youtube = self.__connector
-        request = youtube.videos().list(part="snippet,contentDetails,statistics", id=self.id_video)
-        self.content = request.execute()
+        try:
+            request = youtube.videos().list(part="snippet,contentDetails,statistics", id=self.id_video)
+            self.content = request.execute()
+        except HttpError as err:
+            print("Chief, all is disappeared", err)
+
 
     def print_info(self):
         """ just touch set_info and print self.info"""
@@ -43,15 +48,18 @@ class Video(YouTubeConnectorMixin):
     def parse_info(self):
         """ set self.info as json and parse it"""
         if self.is_connected and self.content:
-            self.info = json.dumps(self.content, indent=2, ensure_ascii=False)
-            self.title_video = self.content["items"][0]["snippet"]["title"]
-            self.url_video = "https://youtu.be/" + self.id_video
-            tmp_likes_video: str = self.content["items"][0]["statistics"]["likeCount"]
-            if tmp_likes_video.isdigit():
-                self.likes_video = int(tmp_likes_video)
-            tmp_video_count: str = self.content["items"][0]["statistics"]["viewCount"]
-            if tmp_video_count.isdigit():
-                self.view_count_video = int(tmp_video_count)
+            try:
+                self.info = json.dumps(self.content, indent=2, ensure_ascii=False)
+                self.title = self.content["items"][0]["snippet"]["title"]
+                self.url_video = "https://youtu.be/" + self.id_video
+                tmp_like_count: str = self.content["items"][0]["statistics"]["likeCount"]
+                if tmp_like_count.isdigit():
+                    self.like_count = int(tmp_like_count)
+                tmp_video_count: str = self.content["items"][0]["statistics"]["viewCount"]
+                if tmp_video_count.isdigit():
+                    self.view_count_video = int(tmp_video_count)
+            except Exception as e:
+                print("Error", {e})
 
 
     def get_duration(self) -> str:
@@ -64,6 +72,10 @@ class Video(YouTubeConnectorMixin):
     def count_views(self) -> int:
         """return count of view the video"""
         return self.view_count_video
+
+    # def try_connect(self):
+    #     url_video = "https://youtu.be/" + self.id_video
+
 
 
 if __name__ == '__main__':
