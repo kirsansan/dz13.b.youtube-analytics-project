@@ -21,6 +21,7 @@ class YouTubeConnectorMixin:
             return cls.__connector
 
 
+
 if __name__ == '__main__':
     s1 = YouTubeConnectorMixin()
     s2 = YouTubeConnectorMixin()
@@ -30,3 +31,4 @@ if __name__ == '__main__':
     print(s3.get_connector())
     p = YouTubeConnectorMixin().get_connector()
     print(p)
+
