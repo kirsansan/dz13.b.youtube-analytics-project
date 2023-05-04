@@ -1,8 +1,6 @@
-from src.channel import Channel
 import json
 from src.youtube_connector import YouTubeConnectorMixin
 from googleapiclient.errors import HttpError
-
 
 
 class Video(YouTubeConnectorMixin):
@@ -10,8 +8,8 @@ class Video(YouTubeConnectorMixin):
     def __init__(self, id_video):
         self.id_video = id_video
         self.__connector = self.get_connector()
-        self.info = None              # will be filled by the update_info()
-        self.content = None           # will be filled by the get_info()
+        self.info = None  # will be filled by the update_info()
+        self.content = None  # will be filled by the get_info()
         self.is_connected = False
         self.title = None
         self.url_video = None
@@ -22,14 +20,11 @@ class Video(YouTubeConnectorMixin):
             self.get_info()
             self.parse_info()
 
-
-
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id_video}"
 
     def __str__(self):
         return f"{self.title}"
-
 
     def get_info(self):
         youtube = self.__connector
@@ -38,7 +33,6 @@ class Video(YouTubeConnectorMixin):
             self.content = request.execute()
         except HttpError as err:
             print("Chief, all is disappeared", err)
-
 
     def print_info(self):
         """ just touch set_info and print self.info"""
@@ -61,7 +55,6 @@ class Video(YouTubeConnectorMixin):
             except Exception as e:
                 print("Error", {e})
 
-
     def get_duration(self) -> str:
         """Returns the duration of the video"""
         if self.content:
@@ -75,7 +68,6 @@ class Video(YouTubeConnectorMixin):
 
     # def try_connect(self):
     #     url_video = "https://youtu.be/" + self.id_video
-
 
 
 if __name__ == '__main__':
