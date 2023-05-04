@@ -54,7 +54,6 @@ class Channel:
             return True
         return False
 
-
     def connect(self):
         """connect with channel and fill self.content"""
         # YT_API_KEY скопирован из гугла и вставлен в переменные окружения
@@ -72,13 +71,11 @@ class Channel:
         if cls.__service_name:
             return cls.__service_name
 
-
     def print_info(self):
         """ just touch set_info and print self.info"""
         if self.is_connected:
             self.set_info()
             print(self.info)
-
 
     def set_info(self):
         """ set self.info """
@@ -91,29 +88,27 @@ class Channel:
             self.title = self.content["items"][0]["snippet"]["title"]
             self.description = self.content["items"][0]["snippet"]["description"]
             # self.url = self.content["items"][0]["snippet"]["thumbnails"]["default"]["url"]
-            tmp_followers : str = self.content["items"][0]["statistics"]["subscriberCount"]
+            tmp_followers: str = self.content["items"][0]["statistics"]["subscriberCount"]
             if tmp_followers.isdigit():
                 self.followers = int(tmp_followers)
             self.video_count = self.content["items"][0]["statistics"]["videoCount"]
             self.view_count = self.content["items"][0]["statistics"]["viewCount"]
-
 
     def get_title(self):
         """ parse title from content and print it """
         if self.is_connected:
             print(self.content["items"][0]["snippet"]["title"])
 
-
     def to_json(self, filename=FILE_FOR_WRITE):
         """ save information to the file json format"""
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump({
-                    "title": self.title,
-                    "description": self.description,
-                    "url": self.url,
-                    "video_count": self.video_count,
-                    "viewCount": self.view_count
-                    }, f, indent=2, ensure_ascii=False, separators=(',', ': '))
+                "title": self.title,
+                "description": self.description,
+                "url": self.url,
+                "video_count": self.video_count,
+                "viewCount": self.view_count
+            }, f, indent=2, ensure_ascii=False, separators=(',', ': '))
 
     @property
     def channel_id(self):
@@ -124,4 +119,3 @@ if __name__ == '__main__':
     ch = Channel('UC1eFXmJNkjITxPFWTy6RsWg')
     ch.connect()
     ch.print_info()
-
