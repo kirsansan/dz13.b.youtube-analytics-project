@@ -1,6 +1,8 @@
 import json
 from src.youtube_connector import YouTubeConnectorMixin
-from googleapiclient.errors import HttpError
+from src.errors_class import MyHttpError
+from googleapiclient.errors import HttpError  # useless import
+import requests  # for a test
 
 
 class Video(YouTubeConnectorMixin):
@@ -8,8 +10,8 @@ class Video(YouTubeConnectorMixin):
     def __init__(self, id_video):
         self.id_video = id_video
         self.__connector = self.get_connector()
-        self.info = None  # will be filled by the update_info()
         self.content = None  # will be filled by the get_info()
+        self.info = None  # will be filled by the parse_info()
         self.is_connected = False
         self.title = None
         self.url_video = None
@@ -31,7 +33,7 @@ class Video(YouTubeConnectorMixin):
         try:
             request = youtube.videos().list(part="snippet,contentDetails,statistics", id=self.id_video)
             self.content = request.execute()
-        except HttpError as err:
+        except Exception as err:
             print("Chief, all is disappeared", err)
 
     def print_info(self):
@@ -43,7 +45,9 @@ class Video(YouTubeConnectorMixin):
         """ set self.info as json and parse it"""
         if self.is_connected and self.content:
             try:
-                self.info = json.dumps(self.content, indent=2, ensure_ascii=False)
+                if not self.content["items"]:
+                    raise MyHttpError(404, "Video not found")
+                self.info = json.dumps(self.content, indent=6, ensure_ascii=False)
                 self.title = self.content["items"][0]["snippet"]["title"]
                 self.url_video = "https://youtu.be/" + self.id_video
                 tmp_like_count: str = self.content["items"][0]["statistics"]["likeCount"]
@@ -52,8 +56,9 @@ class Video(YouTubeConnectorMixin):
                 tmp_video_count: str = self.content["items"][0]["statistics"]["viewCount"]
                 if tmp_video_count.isdigit():
                     self.view_count_video = int(tmp_video_count)
-            except Exception as e:
-                print("Error", {e})
+            except MyHttpError as e:
+                print("Bad video reference ", {e})
+
 
     def get_duration(self) -> str:
         """Returns the duration of the video"""
@@ -66,9 +71,6 @@ class Video(YouTubeConnectorMixin):
         """return count of view the video"""
         return self.view_count_video
 
-    # def try_connect(self):
-    #     url_video = "https://youtu.be/" + self.id_video
-
 
 if __name__ == '__main__':
     v1 = Video('9lO06Zxhu88')
@@ -80,3 +82,6 @@ if __name__ == '__main__':
     print(v1.get_duration())
     # ch = Channel("UCNYejKoEJ84iGgXPwTBkCCg")
     # print(ch)
+    ve = Video('bad_link_to_non_exist_video')
+
+
